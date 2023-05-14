@@ -15,12 +15,40 @@ minutos.innerHTML = '25';
 seconds.innerHTML = '00';
 pomodoroCountNumber.innerHTML = "1";
 
-let min = 25;
-let sec = 60;
+let min = 0;
+let sec = 6;
 var secondsCount = 1;
 var pomodoroCount = 1;
 var pomodoroCountAll = 1;
 let intervalId;
+
+
+/**
+ * Verifica se a notificação de áudio na página está permitida.
+ */
+function verifyAudioPermission() {
+    if (!("Notification" in window)) {
+        alert("Seu navegador não suporta notificações de áudio");
+    }
+
+    if(Notification.permission === "denied") {
+        Notification.requestPermission(permission => {
+            if (permission === "granted") {
+            }
+        });
+    }
+}
+
+
+/**
+ * Chama a mensagem de notificação para o usuário.
+ * 
+ * @param {string} title Refere-se ao título da mensagem que aparece para o usuário.
+ */
+function callNotification(title) {
+    new Notification(title);
+    pomodoroSound.play();
+}
 
 
 /**
@@ -96,6 +124,8 @@ function longBreak() {
  * @param {number} sec Refere-se à quantidade total de segundos e decresse até 0 também.
  */
 function startPomodoro() {
+    verifyAudioPermission();
+
     /* Remove o botão "start" e colocar o botão "break" no lugar */
     startButton[0].style.display = "none";
     breakButton[0].style.display = "inline-block";
@@ -157,8 +187,8 @@ function startPomodoro() {
     /* Retorna aos valores padrões das variáveis "min" e "sec" para 25 e 60, respectivamente. */
     if (min == 0  && sec == 0) {
 
-        pomodoroSound.play();
-        breakPomodoro()
+        callNotification("O tempo acabou!");
+        breakPomodoro();
         min = 25;
         sec = 60;
     }
